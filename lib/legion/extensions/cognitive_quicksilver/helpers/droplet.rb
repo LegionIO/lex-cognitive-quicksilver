@@ -52,14 +52,13 @@ module Legion
             half_mass = (@mass / 2.0).round(10)
             @mass     = half_mass
 
-            twin = self.class.new(
+            self.class.new(
               form:     @form,
               content:  @content,
               mass:     half_mass,
               fluidity: @fluidity,
               surface:  @surface
             )
-            twin
           end
 
           def capture!

@@ -10,18 +10,18 @@ module Legion
             @pools    = {}
           end
 
-          def create_droplet(form:, content:, **opts)
+          def create_droplet(form:, content:, **)
             raise ArgumentError, 'droplet limit reached' if @droplets.size >= Constants::MAX_DROPLETS
 
-            droplet = Droplet.new(form: form, content: content, **opts)
+            droplet = Droplet.new(form: form, content: content, **)
             @droplets[droplet.id] = droplet
             droplet
           end
 
-          def create_pool(surface_type:, **opts)
+          def create_pool(surface_type:, **)
             raise ArgumentError, 'pool limit reached' if @pools.size >= Constants::MAX_POOLS
 
-            pool = Pool.new(surface_type: surface_type, **opts)
+            pool = Pool.new(surface_type: surface_type, **)
             @pools[pool.id] = pool
             pool
           end
@@ -79,18 +79,14 @@ module Legion
           def quicksilver_report
             droplets = @droplets.values
             total    = droplets.size
-
-            avg_mass     = total.zero? ? 0.0 : (droplets.sum(&:mass) / total.to_f).round(10)
-            avg_fluidity = total.zero? ? 0.0 : (droplets.sum(&:fluidity) / total.to_f).round(10)
-
             {
               total_droplets:  total,
               total_pools:     @pools.size,
               captured_count:  droplets.count(&:captured),
               elusive_count:   droplets.count(&:elusive?),
               vanishing_count: droplets.count(&:vanishing?),
-              avg_mass:        avg_mass,
-              avg_fluidity:    avg_fluidity
+              avg_mass:        avg_metric(droplets, total, :mass),
+              avg_fluidity:    avg_metric(droplets, total, :fluidity)
             }
           end
 
@@ -103,6 +99,12 @@ module Legion
           end
 
           private
+
+          def avg_metric(droplets, total, method)
+            return 0.0 if total.zero?
+
+            (droplets.sum(&method) / total.to_f).round(10)
+          end
 
           def fetch_droplet!(id)
             @droplets.fetch(id) { raise ArgumentError, "droplet not found: #{id}" }

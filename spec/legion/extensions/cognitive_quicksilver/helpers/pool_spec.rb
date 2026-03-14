@@ -155,7 +155,7 @@ RSpec.describe Legion::Extensions::CognitiveQuicksilver::Helpers::Pool do
     it 'returns a hash with all expected keys' do
       h = pool.to_h
       expect(h.keys).to include(:id, :surface_type, :depth, :droplet_ids, :droplet_count,
-                                 :surface_tension, :reflective, :shallow, :created_at)
+                                :surface_tension, :reflective, :shallow, :created_at)
     end
 
     it 'reflects droplet_count' do

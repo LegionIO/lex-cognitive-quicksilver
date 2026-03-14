@@ -47,7 +47,9 @@ RSpec.describe Legion::Extensions::CognitiveQuicksilver::Helpers::Droplet do
     end
 
     it 'raises ArgumentError for invalid surface' do
-      expect { described_class.new(form: :droplet, content: 'x', surface: :air) }.to raise_error(ArgumentError, /invalid surface/)
+      expect do
+        described_class.new(form: :droplet, content: 'x', surface: :air)
+      end.to raise_error(ArgumentError, /invalid surface/)
     end
 
     it 'sets created_at' do
@@ -84,9 +86,10 @@ RSpec.describe Legion::Extensions::CognitiveQuicksilver::Helpers::Droplet do
     let(:other) { described_class.new(form: :liquid, content: 'other', mass: 0.4) }
 
     it 'combines mass with coalescence bonus' do
+      bonus         = Legion::Extensions::CognitiveQuicksilver::Helpers::Constants::COALESCENCE_BONUS
       original_mass = droplet.mass
       droplet.merge!(other)
-      expected = [(original_mass + other.mass + Legion::Extensions::CognitiveQuicksilver::Helpers::Constants::COALESCENCE_BONUS), 1.0].min
+      expected = [original_mass + other.mass + bonus, 1.0].min
       expect(droplet.mass).to be_within(0.001).of(expected)
     end
 
@@ -292,7 +295,7 @@ RSpec.describe Legion::Extensions::CognitiveQuicksilver::Helpers::Droplet do
     it 'returns a hash with all expected keys' do
       h = droplet.to_h
       expect(h.keys).to include(:id, :form, :content, :mass, :fluidity, :surface, :captured,
-                                 :elusive, :stable, :vanishing, :cohesion, :fluidity_lbl, :created_at)
+                                :elusive, :stable, :vanishing, :cohesion, :fluidity_lbl, :created_at)
     end
 
     it 'id matches droplet id' do
