@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir.chdir(__dir__) { `git ls-files -z`.split("\x0") }
   spec.require_paths = ['lib']
+  spec.add_development_dependency 'legion-gaia'
 end
